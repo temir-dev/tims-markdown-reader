@@ -1,0 +1,2 @@
+# Preserve the upstream vendored runtime byte-for-byte, including whitespace.
+ReaderCore/Sources/ReaderCore/Resources/mermaid.min.js -whitespace

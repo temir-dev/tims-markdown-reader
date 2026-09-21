@@ -1,0 +1,30 @@
+.DS_Store
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# Local compiler caches and release artifacts
+.build/
+.swiftpm/
+dist/
+
+# Private material must never enter the public source tree
+private/
+research/
+.env
+.env.*
+*.pem
+*.key
+*.p8
+*.p12
+*.pfx
+*.mobileprovision
+*.provisionprofile
+*.dSYM/
+*.dmg
+*.zip
+*.log
+__pycache__/
+*.py[cod]
+._*

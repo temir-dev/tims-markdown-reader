@@ -1,0 +1,9 @@
+{
+  "package": "mermaid",
+  "version": "11.16.1",
+  "source": "https://registry.npmjs.org/mermaid/-/mermaid-11.16.1.tgz",
+  "registryIntegrity": "sha512-TQsq6u22fAn3rek5VOubrhKPo1g5hwC3FXUN9hiyupTckcYiGuuKGkNQrKYwGJkXUxZdojwRG46gsSCFZMDp4g==",
+  "tarballSHA256": "ebd9885111092c78cefc79a76f6c1dc34ed5b834b02ae8f338227ce79c003de4",
+  "vendoredRuntime": "ReaderCore/Sources/ReaderCore/Resources/mermaid.min.js",
+  "runtimeSHA256": "18327bef70d96fb505fe7287d9f6a7362ebf07ff6576ddfaffb1a06f3e1a2954"
+}
