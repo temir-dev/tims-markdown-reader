@@ -6,6 +6,8 @@ You open a `.md` file, it shows it nicely, you read it and close it. That's the 
 
 It's handy for the Markdown files that AI tools and coding agents leave behind (reports, notes, handoffs) when you just want to read them without opening an editor.
 
+![A handoff document open in Tim’s Markdown Reader, showing a Mermaid flowchart and a results table in dark mode](docs/screenshot.png)
+
 **Needs an Apple silicon Mac (M1 or newer) running macOS 14 or later.** Intel Macs aren't supported.
 
 ## Download
