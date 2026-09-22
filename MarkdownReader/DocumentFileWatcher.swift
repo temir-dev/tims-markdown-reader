@@ -27,9 +27,12 @@ final class DocumentFileWatcher {
         self.documentURL = documentURL
         self.callback = callback
         lastFingerprint = Self.fingerprint(for: documentURL)
+        // macOS may allow reading an opened document but refuse its folder (Desktop,
+        // Documents, Downloads without folder access). Watching the file alone still
+        // catches in-place saves and, via rename/delete events, atomic replacements.
         directorySource = watch(documentURL.deletingLastPathComponent())
-        guard directorySource != nil else { return nil }
         fileSource = watch(documentURL)
+        guard directorySource != nil || fileSource != nil else { return nil }
     }
 
     private func watch(_ url: URL) -> (any DispatchSourceFileSystemObject)? {
