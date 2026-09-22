@@ -6,9 +6,9 @@ You open a `.md` file, it shows it nicely, you read it and close it. That's the 
 
 It's handy for the Markdown files that AI tools and coding agents leave behind (reports, notes, handoffs) when you just want to read them without opening an editor.
 
-## Screenshot
-
 https://github.com/user-attachments/assets/799d6293-efe6-4afb-a53b-58ccabe3c16a
+
+## Screenshot
 
 ![A handoff document open in Tim’s Markdown Reader, showing a Mermaid flowchart and a results table in dark mode](docs/screenshot.png)
 
