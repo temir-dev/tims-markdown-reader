@@ -2,7 +2,7 @@
 
 A small, free Markdown viewer for Mac.
 
-You open a `.md` file, it shows it nicely, you read it and close it. That's the whole app. No editor, no account, no tracking, nothing to set up.
+It's a fast, minimal viewer written in Swift: you open a Markdown file and read it, and there's no editor, no account, no tracking and nothing to configure.
 
 It's handy for the Markdown files that AI tools and coding agents leave behind (reports, notes, handoffs) when you just want to read them without opening an editor.
 
