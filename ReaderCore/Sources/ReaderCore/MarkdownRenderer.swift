@@ -469,7 +469,7 @@ private struct SafeHTMLVisitor: MarkupVisitor {
     }
 
     private func blockedLink(_ content: String) -> String {
-        "<span class=\"link-pending\" title=\"Blocked unsafe or unsupported link\">\(content)</span>"
+        "<span class=\"link-pending\" title=\"Link type not supported\">\(content)</span>"
     }
 
     private func safeLanguageName(_ value: String) -> String {

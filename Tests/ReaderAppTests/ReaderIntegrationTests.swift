@@ -164,7 +164,7 @@ struct ReaderIntegrationTests {
         #expect(descendant(WKWebView.self, in: reader.view) === web)
         try await wait { (try? await web.evaluateJavaScript("document.querySelector('img')?.naturalWidth")) as? Int == 1 }
         #expect(try await web.evaluateJavaScript("typeof globalThis.injected") as? String == "undefined")
-        #expect(try await web.evaluateJavaScript("document.querySelector('.link-pending')?.getAttribute('title')") as? String == "Blocked unsafe or unsupported link")
+        #expect(try await web.evaluateJavaScript("document.querySelector('.link-pending')?.getAttribute('title')") as? String == "Link type not supported")
         #expect(try await web.evaluateJavaScript("document.querySelector('.link-pending')?.hasAttribute('href')") as? Bool == false)
         try await wait { (try? await web.evaluateJavaScript("document.querySelector('.mermaid-diagram iframe')?.getAttribute('sandbox')")) as? String == "" }
         #expect(try await web.evaluateJavaScript("document.querySelector('.mermaid-diagram iframe').srcdoc.includes('<svg')") as? Bool == true)
