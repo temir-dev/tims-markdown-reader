@@ -22,6 +22,8 @@ The app doesn't update itself. **Tim’s Markdown Reader → Check for Updates�
 
 ## What it does
 
+https://github.com/user-attachments/assets/dcddb0b4-5854-4dc4-9320-759dbff49e2b
+
 - Renders Markdown: headings, tables, code blocks, task lists, footnotes, and images stored next to the file
 - Mermaid diagrams, rendered offline
 - Find (`⌘F`) highlights every match and shows a count. `⌘G` and `⇧⌘G` jump to the next and previous match
