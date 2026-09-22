@@ -125,6 +125,13 @@ struct ReaderIntegrationTests {
         #expect(try await web.evaluateJavaScript("typeof window.readerFind") as? String == "undefined")
         reader.findNext(nil)
         try await wait { status.stringValue == "2 of 4" }
+        // Typing must not step: the field acts only on Return, and refining the query
+        // keeps the current match when it still matches.
+        #expect(field.sendsWholeSearchString)
+        field.stringValue = "COAST"
+        reader.controlTextDidChange(Notification(name: NSControl.textDidChangeNotification, object: field))
+        try await Task.sleep(for: .milliseconds(400))
+        #expect(status.stringValue == "2 of 4")
         reader.findPrevious(nil)
         try await wait { status.stringValue == "1 of 4" }
         reader.findPrevious(nil)

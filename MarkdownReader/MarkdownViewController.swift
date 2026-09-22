@@ -45,6 +45,9 @@ final class MarkdownViewController: NSViewController, WKNavigationDelegate, NSSe
         findField.delegate = self
         findField.target = self
         findField.action = #selector(findNext(_:))
+        // Only Return steps to the next match. By default a search field also sends its
+        // action while typing, which made every pause in typing jump forward.
+        findField.sendsWholeSearchString = true
     }
 
     @available(*, unavailable)

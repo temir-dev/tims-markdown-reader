@@ -16,6 +16,8 @@
   const skippedSelector = "script,style,template,iframe,.mermaid-diagram";
   let ranges = [];
   let current = -1;
+  // Start of the match the reader was on before the query changed.
+  let previousCurrent = null;
   let limited = false;
 
   function state() {
@@ -25,6 +27,7 @@
   function clear() {
     ranges = [];
     current = -1;
+    previousCurrent = null;
     limited = false;
     if (supported) {
       CSS.highlights.delete(allName);
@@ -134,8 +137,21 @@
     window.scrollTo({ top: Math.max(0, target), behavior: "instant" });
   }
 
+  function keepCurrentIfStillMatching() {
+    if (!previousCurrent) return -1;
+    return ranges.findIndex((range) =>
+      range.startContainer === previousCurrent.startContainer &&
+      range.startOffset === previousCurrent.startOffset);
+  }
+
   function search(query, shouldReveal) {
+    // Refining a query should keep the reader on the same match when it still
+    // matches, instead of hopping to whichever match is nearest the viewport top.
+    const remembered = current >= 0 && ranges[current]
+      ? { startContainer: ranges[current].startContainer, startOffset: ranges[current].startOffset }
+      : null;
     clear();
+    previousCurrent = remembered;
     if (!supported || typeof query !== "string" || query.trim().length === 0) return state();
 
     let expression;
@@ -166,7 +182,9 @@
     }
 
     if (ranges.length === 0) return state();
-    current = firstMatchFromViewport();
+    const kept = keepCurrentIfStillMatching();
+    current = kept >= 0 ? kept : firstMatchFromViewport();
+    previousCurrent = null;
     paint();
     if (shouldReveal !== false) reveal();
     return state();
