@@ -22,7 +22,7 @@ The app doesn't update itself. **Tim’s Markdown Reader → Check for Updates�
 
 ## What it does
 
-https://github.com/user-attachments/assets/dcddb0b4-5854-4dc4-9320-759dbff49e2b
+https://github.com/user-attachments/assets/799d6293-efe6-4afb-a53b-58ccabe3c16a
 
 - Renders Markdown: headings, tables, code blocks, task lists, footnotes, and images stored next to the file
 - Mermaid diagrams, rendered offline
