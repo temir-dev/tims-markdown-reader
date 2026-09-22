@@ -6,6 +6,8 @@ You open a `.md` file, it shows it nicely, you read it and close it. That's the 
 
 It's handy for the Markdown files that AI tools and coding agents leave behind (reports, notes, handoffs) when you just want to read them without opening an editor.
 
+https://github.com/user-attachments/assets/799d6293-efe6-4afb-a53b-58ccabe3c16a
+
 ![A handoff document open in Tim’s Markdown Reader, showing a Mermaid flowchart and a results table in dark mode](docs/screenshot.png)
 
 **Needs an Apple silicon Mac (M1 or newer) running macOS 14 or later.** Intel Macs aren't supported.
@@ -21,8 +23,6 @@ To make it the default for Markdown files: select a `.md` file in Finder, then *
 The app doesn't update itself. **Tim’s Markdown Reader → Check for Updates…** shows your version and opens the download page; to update, download the new version and replace the app. To uninstall, drag it to the Trash. Your files are never touched.
 
 ## What it does
-
-https://github.com/user-attachments/assets/799d6293-efe6-4afb-a53b-58ccabe3c16a
 
 - Renders Markdown: headings, tables, code blocks, task lists, footnotes, and images stored next to the file
 - Mermaid diagrams, rendered offline
