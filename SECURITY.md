@@ -6,4 +6,4 @@ Helpful to include: app version, macOS version, what you expected, what happened
 
 This is a free project maintained in spare time, so there's no guaranteed response time. Fixes go into the latest release.
 
-What the app does to stay safe: HTML and MDX inside documents are shown as text, remote images and unsafe links are blocked, and diagrams render in a sandboxed frame. That doesn't make every possible file safe, and it can't vouch for websites you choose to open from a link.
+What the app does to stay safe: HTML and MDX inside documents are shown as text, remote images are blocked, only http, https, mailto and local Markdown links are allowed, and diagrams render in a sandboxed frame. That doesn't make every possible file safe, and it can't vouch for websites you choose to open from a link.
