@@ -14,7 +14,7 @@ It's handy for the Markdown files that AI tools and coding agents leave behind (
 
 Get the DMG from the [latest release](https://github.com/temir-dev/tims-markdown-reader/releases/latest). Open it, drag the app to Applications, eject the disk image. Done.
 
-The app is signed and notarized by Apple. The first time you open it, macOS shows its usual "downloaded from the internet" prompt, and that's it.
+The app is Developer ID-signed and notarized by Apple. The first time you open it, macOS shows its usual "downloaded from the internet" prompt, and that's it.
 
 To make it the default for Markdown files: select a `.md` file in Finder, then **Get Info → Open with → Tim’s Markdown Reader → Change All**.
 
