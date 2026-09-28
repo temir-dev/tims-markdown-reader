@@ -12,7 +12,7 @@ extension ReaderIntegrationTests {
         let defaults = try #require(UserDefaults(suiteName: suite))
         defer { defaults.removePersistentDomain(forName: suite) }
         let preferences = ReadingPreferences(defaults: defaults)
-        #expect(preferences.font == .system && preferences.textSize == 17 && preferences.width == .centered)
+        #expect(preferences.font == .system && preferences.textSize == 17 && preferences.width == .centered && preferences.tables == .wrap)
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: directory) }
@@ -48,14 +48,20 @@ extension ReaderIntegrationTests {
         slider.doubleValue = 21
         let sliderAction = try #require(slider.action)
         #expect(slider.sendAction(sliderAction, to: slider.target))
-        let width = try #require(descendant(NSSegmentedControl.self, in: content))
+        let width = try #require(descendant(identifiedBy: "reader-width-choice", in: content) as? NSSegmentedControl)
         width.selectedSegment = 1
         let widthAction = try #require(width.action)
         #expect(width.sendAction(widthAction, to: width.target))
+        let tables = try #require(descendant(identifiedBy: "reader-table-choice", in: content) as? NSSegmentedControl)
+        #expect(tables.selectedSegment == 0)
+        tables.selectedSegment = 1
+        let tablesAction = try #require(tables.action)
+        #expect(tables.sendAction(tablesAction, to: tables.target))
         for web in webs {
             try await wait { (try? await web.evaluateJavaScript("getComputedStyle(document.documentElement).fontSize")) as? String == "21px" }
             #expect(try await web.evaluateJavaScript("getComputedStyle(document.querySelector('p')).fontFamily.includes('Georgia')") as? Bool == true)
             #expect(try await web.evaluateJavaScript("document.documentElement.dataset.readerWidth") as? String == "full")
+            #expect(try await web.evaluateJavaScript("document.documentElement.dataset.readerTables") as? String == "scroll")
             #expect(try await web.evaluateJavaScript("window.settingsTestMarker") as? Int == 42)
             #expect(try await web.evaluateJavaScript("window.scrollY") as? Double ?? 0 > 0)
             try await wait { (try? await web.evaluateJavaScript("document.querySelector('.mermaid-diagram iframe')?.srcdoc.includes('21px')")) as? Bool == true }
@@ -64,7 +70,7 @@ extension ReaderIntegrationTests {
         let wideWidth = try #require(try await webs[0].evaluateJavaScript("document.querySelector('.reader > p').getBoundingClientRect().width") as? Double)
         #expect(wideWidth > originalWidth + 100)
         let restored = ReadingPreferences(defaults: defaults)
-        #expect(restored.font == .serif && restored.textSize == 21 && restored.width == .full)
+        #expect(restored.font == .serif && restored.textSize == 21 && restored.width == .full && restored.tables == .scroll)
         // A fresh reader and an external file save must both retain the appearance.
         let file = directory.appendingPathComponent("settings-new.md")
         try Data("# New reader".utf8).write(to: file)
@@ -98,10 +104,11 @@ extension ReaderIntegrationTests {
         let resetAction = try #require(reset.action)
         #expect(reset.sendAction(resetAction, to: reset.target))
         // Each visible control must stay inside the small fixed settings window.
-        for control: NSView in [font, slider, width, smaller, larger, reset] {
+        for control: NSView in [font, slider, width, tables, smaller, larger, reset] {
             #expect(content.bounds.contains(control.convert(control.bounds, to: content)))
         }
-        #expect(font.titleOfSelectedItem == "System" && slider.doubleValue == 17 && width.selectedSegment == 0)
+        #expect(font.titleOfSelectedItem == "System" && slider.doubleValue == 17 && width.selectedSegment == 0 && tables.selectedSegment == 0)
+        #expect(preferences.tables == .wrap)
         try await wait { (try? await freshWeb.evaluateJavaScript("getComputedStyle(document.documentElement).fontSize")) as? String == "17px" }
         #expect(try String(contentsOf: directory.appendingPathComponent("settings-0.md"), encoding: .utf8) == source)
     }
@@ -110,9 +117,9 @@ extension ReaderIntegrationTests {
         let suite = "ReadingSettingsTests." + UUID().uuidString
         let defaults = try #require(UserDefaults(suiteName: suite))
         defer { defaults.removePersistentDomain(forName: suite) }
-        defaults.set(["font": "invalid", "width": "invalid", "textSize": 900], forKey: "readingAppearance")
+        defaults.set(["font": "invalid", "width": "invalid", "tables": "invalid", "textSize": 900], forKey: "readingAppearance")
         let preferences = ReadingPreferences(defaults: defaults)
-        #expect(preferences.font == .system && preferences.width == .centered && preferences.textSize == 28)
+        #expect(preferences.font == .system && preferences.width == .centered && preferences.tables == .wrap && preferences.textSize == 28)
         preferences.update(textSize: -100)
         #expect(preferences.textSize == 12)
         preferences.update(textSize: .nan)

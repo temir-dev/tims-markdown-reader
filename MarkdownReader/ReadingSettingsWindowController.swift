@@ -11,10 +11,11 @@ final class ReadingSettingsWindowController: NSWindowController {
     private let smaller = NSButton(title: "−", target: nil, action: nil)
     private let larger = NSButton(title: "+", target: nil, action: nil)
     private let widthChoice = NSSegmentedControl(labels: ["Centered", "Full Width"], trackingMode: .selectOne, target: nil, action: nil)
+    private let tableChoice = NSSegmentedControl(labels: ["Wrap", "Scroll"], trackingMode: .selectOne, target: nil, action: nil)
 
     init(preferences: ReadingPreferences) {
         self.preferences = preferences
-        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 440, height: 230),
+        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 440, height: 270),
                               styleMask: [.titled, .closable], backing: .buffered, defer: false)
         window.title = "Settings"
         window.isReleasedWhenClosed = false
@@ -51,6 +52,12 @@ final class ReadingSettingsWindowController: NSWindowController {
         widthChoice.target = self
         widthChoice.action = #selector(changeWidth)
         widthChoice.setAccessibilityLabel("Content width")
+        widthChoice.identifier = NSUserInterfaceItemIdentifier("reader-width-choice")
+        tableChoice.target = self
+        tableChoice.action = #selector(changeTables)
+        tableChoice.setAccessibilityLabel("Table text")
+        tableChoice.toolTip = "Wrap fits tables to the page; Scroll keeps long rows on one line"
+        tableChoice.identifier = NSUserInterfaceItemIdentifier("reader-table-choice")
         let sizeRow = NSStackView(views: [smaller, sizeSlider, larger, sizeLabel])
         sizeRow.orientation = .horizontal
         sizeRow.spacing = 6
@@ -58,7 +65,8 @@ final class ReadingSettingsWindowController: NSWindowController {
         sizeLabel.widthAnchor.constraint(equalToConstant: 24).isActive = true
         let grid = NSGridView(views: [[NSTextField(labelWithString: "Font"), fontChoice],
                                       [NSTextField(labelWithString: "Text size"), sizeRow],
-                                      [NSTextField(labelWithString: "Layout"), widthChoice]])
+                                      [NSTextField(labelWithString: "Layout"), widthChoice],
+                                      [NSTextField(labelWithString: "Tables"), tableChoice]])
         grid.rowSpacing = 18
         grid.columnSpacing = 18
         grid.column(at: 0).xPlacement = .trailing
@@ -91,6 +99,7 @@ final class ReadingSettingsWindowController: NSWindowController {
     @objc private func decreaseSize() { preferences.update(textSize: preferences.textSize - 1) }
     @objc private func increaseSize() { preferences.update(textSize: preferences.textSize + 1) }
     @objc private func changeWidth() { preferences.update(width: widthChoice.selectedSegment == 1 ? .full : .centered) }
+    @objc private func changeTables() { preferences.update(tables: tableChoice.selectedSegment == 1 ? .scroll : .wrap) }
     @objc private func restoreDefaults() { preferences.restoreDefaults() }
     @objc private func preferencesChanged() { refreshControls() }
 
@@ -101,5 +110,6 @@ final class ReadingSettingsWindowController: NSWindowController {
         smaller.isEnabled = preferences.textSize > ReadingPreferences.sizeRange.lowerBound
         larger.isEnabled = preferences.textSize < ReadingPreferences.sizeRange.upperBound
         widthChoice.selectedSegment = preferences.width == .full ? 1 : 0
+        tableChoice.selectedSegment = preferences.tables == .scroll ? 1 : 0
     }
 }

@@ -175,6 +175,12 @@ table {
   width: max-content;
 }
 
+/* Wrap (the default): tables fit the page and long cells wrap, even unbroken
+   strings such as URLs. Scroll keeps each table's natural width. A table with too
+   many columns to fit still scrolls sideways in either mode. */
+:root:not([data-reader-tables="scroll"]) table { width: 100%; }
+:root:not([data-reader-tables="scroll"]) :is(th, td) { overflow-wrap: anywhere; }
+
 th, td {
   border-bottom: 1px solid var(--border);
   border-right: 1px solid var(--border);

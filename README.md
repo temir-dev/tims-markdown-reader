@@ -32,7 +32,7 @@ The app doesn't update itself. **Tim’s Markdown Reader → Check for Updates�
 - Links to other Markdown files open in the same window. Go back and forward with the toolbar arrows, the **Go** menu, or `⌘[` and `⌘]`
 - Reloads by itself when the file changes on disk
 - Light and dark mode follow your Mac
-- Settings (`⌘,`) for font, text size and page width
+- Settings (`⌘,`) for font, text size, page width, and whether tables wrap or scroll
 - Opens `.md`, `.markdown` and `.mdx` (MDX is shown as text, not run)
 
 Want to see it in action? Open the [sample files](fixtures/visual-review/00-start-here.md) with it.
