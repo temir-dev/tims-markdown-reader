@@ -72,23 +72,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func showAbout(_ sender: Any?) {
+        NSApp.orderFrontStandardAboutPanel(options: Self.aboutPanelOptions())
+    }
+
+    static func aboutPanelOptions(bundle: Bundle = .main) -> [NSApplication.AboutPanelOptionKey: Any] {
         let credits = NSAttributedString(
             string: "Free and open source · MIT licensed\nProvided as is, without warranty.\nFull license and third-party notices: app menu → Licenses…",
             attributes: [.font: NSFont.systemFont(ofSize: 12)]
         )
-        NSApp.orderFrontStandardAboutPanel(options: [
+        return [
             .applicationName: "Tim’s Markdown Reader",
+            .applicationVersion: installedVersionDescription(bundle: bundle),
+            // An empty build string keeps the build number out of the version line.
+            .version: "",
             .credits: credits
-        ])
+        ]
     }
 
     /// The download page. The app never checks online itself; the browser opens this.
     static let releasesURL = URL(string: "https://github.com/temir-dev/tims-markdown-reader/releases/latest")!
 
     static func installedVersionDescription(bundle: Bundle = .main) -> String {
-        let version = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?"
-        let build = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "?"
-        return "\(version) (\(build))"
+        bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?"
     }
 
     @objc func checkForUpdates(_ sender: Any?) {

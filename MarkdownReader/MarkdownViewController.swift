@@ -126,7 +126,10 @@ final class MarkdownViewController: NSViewController, WKNavigationDelegate, NSSe
 
     func showLoading() {
         schemeHandler.update(document: MarkdownRenderer.loadingDocument())
-        loadDocumentShell(restoringScrollY: nil)
+        // This page only starts WebKit early. Revealing it for an instant before
+        // the document replaced it showed as a flash, so the cover stays on.
+        loadDocumentShell(restoringScrollY: nil, revealingWhenPresented: false)
+        loadingCover.showLabel(after: .milliseconds(500))
     }
 
     func show(
@@ -399,7 +402,8 @@ final class MarkdownViewController: NSViewController, WKNavigationDelegate, NSSe
 
     private func loadDocumentShell(
         restoringScrollY: Double?,
-        navigatingToFragment fragment: String? = nil
+        navigatingToFragment fragment: String? = nil,
+        revealingWhenPresented: Bool = true
     ) {
         guard !rendererUnavailable else { return }
         restorationNavigation = nil
@@ -423,7 +427,7 @@ final class MarkdownViewController: NSViewController, WKNavigationDelegate, NSSe
         presentationNavigation = nil
         loadingCover.isHidden = false
         let navigation = webView.load(URLRequest(url: targetURL))
-        presentationNavigation = navigation
+        presentationNavigation = revealingWhenPresented ? navigation : nil
         if navigation == nil { setRendererUnavailable(true) }
         if let restoringScrollY, let navigation {
             restorationNavigation = navigation
@@ -569,6 +573,43 @@ final class MarkdownViewController: NSViewController, WKNavigationDelegate, NSSe
 
 /// Covers WebKit's transient blank frames without suspending its layout/paint.
 private final class ReaderBackgroundView: NSView {
+    private let label = NSTextField(labelWithString: "Loading…")
+    private var pendingLabel: DispatchWorkItem?
+
+    init() {
+        super.init(frame: .zero)
+        label.textColor = .secondaryLabelColor
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(label)
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ])
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is not used")
+    }
+
+    /// Only a document that is slow to arrive gets the label; a quick one never flashes it.
+    func showLabel(after delay: DispatchTimeInterval) {
+        pendingLabel?.cancel()
+        let work = DispatchWorkItem { [weak self] in self?.label.isHidden = false }
+        pendingLabel = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
+    }
+
+    override var isHidden: Bool {
+        didSet {
+            guard isHidden else { return }
+            pendingLabel?.cancel()
+            pendingLabel = nil
+            label.isHidden = true
+        }
+    }
+
     override var isOpaque: Bool { true }
 
     override func draw(_ dirtyRect: NSRect) {
@@ -591,6 +632,12 @@ private func readerBackground(for appearance: NSAppearance) -> NSColor {
 private final class ReaderWebView: WKWebView {
     override init(frame: NSRect, configuration: WKWebViewConfiguration) {
         super.init(frame: frame, configuration: configuration)
+        // WebKit fills a new page with white until its first paint, and that frame
+        // can reach the screen as the cover lifts. Without its own fill the window
+        // colour shows through instead. Undocumented, so only used while it exists.
+        if responds(to: NSSelectorFromString("_setDrawsBackground:")) {
+            setValue(false, forKey: "drawsBackground")
+        }
         updateBackground()
     }
 

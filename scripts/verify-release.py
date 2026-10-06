@@ -25,7 +25,7 @@ def verify(app, unsigned=False, distribution=False):
         info = plistlib.load(stream)
     with (ROOT / 'MarkdownReader/Info.plist').open('rb') as stream:
         source = plistlib.load(stream)
-    for key in ('CFBundleShortVersionString', 'CFBundleVersion', 'LSMinimumSystemVersion', 'NSHumanReadableCopyright'):
+    for key in ('CFBundleShortVersionString', 'CFBundleVersion', 'LSMinimumSystemVersion', 'NSHumanReadableCopyright', 'CFBundleDocumentTypes', 'UTImportedTypeDeclarations'):
         require(info[key] == source[key], 'Metadata mismatch: ' + key)
     require(info['LSMinimumSystemVersion'] == '14.0', 'Unexpected minimum OS')
     print(run(sys.executable, str(ROOT / 'scripts/check-privacy.py'), '--bundle', str(app)).strip())

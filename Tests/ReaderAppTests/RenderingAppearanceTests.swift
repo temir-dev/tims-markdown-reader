@@ -42,6 +42,11 @@ extension ReaderIntegrationTests {
             }
         }
 
+        // WebKit must not fill a page with its own white before the first paint:
+        // that frame reached the screen whenever the cover lifted a moment early.
+        if web.responds(to: NSSelectorFromString("_drawsBackground")) {
+            #expect(web.value(forKey: "drawsBackground") as? Bool == false)
+        }
         // The original flash occurs before any HTML or stylesheet exists.
         #expect(web.url == nil)
         #expect(!cover.isHidden && cover.isOpaque)
@@ -55,11 +60,16 @@ extension ReaderIntegrationTests {
         // WebKit cannot snapshot a page before its first navigation, so check
         // both native backing colors here, then actual pixels once it can draw.
         try expectNativeBackground(dark: true)
+        let label = try #require(descendant(NSTextField.self, in: cover))
         reader.showLoading()
-        #expect(!cover.isHidden)
+        #expect(!cover.isHidden && label.isHidden)
         try expectNativeBackground(dark: true)
         try await wait { (try? await web.evaluateJavaScript("document.querySelector('.status') !== null")) as? Bool == true }
-        try await wait { cover.isHidden }
+        // The loading page is never revealed. Lifting the cover for it and covering
+        // again for the document showed as a flash on larger files. A slow document
+        // gets a native label on the cover instead, and a quick one never sees it.
+        try await wait { !label.isHidden }
+        #expect(!cover.isHidden)
         try await expectCanvas(dark: true)
 
         for dark in [true, false, true] {
@@ -73,6 +83,7 @@ extension ReaderIntegrationTests {
             try await expectCanvas(dark: dark)
             try await wait { (try? await web.evaluateJavaScript("document.querySelector('h1')?.textContent")) as? String == "Reloaded document" }
             try await wait { cover.isHidden }
+            #expect(label.isHidden)
             try await expectCanvas(dark: dark)
         }
 

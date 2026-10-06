@@ -29,7 +29,24 @@ extension ReaderIntegrationTests {
         #expect(url.path.hasSuffix("/releases/latest"))
         #expect(url.query == nil && url.user == nil)
 
-        // The test harness has no app Info.plist, so the fallback must stay readable.
-        #expect(AppDelegate.installedVersionDescription(bundle: Bundle(for: AppDelegate.self)).contains("("))
+        // People see the version only. The build number stays in Info.plist for telling builds apart.
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("version-\(UUID().uuidString).bundle")
+        try FileManager.default.createDirectory(at: directory.appendingPathComponent("Contents"), withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let info = ["CFBundleIdentifier": "test.version", "CFBundleShortVersionString": "3.4", "CFBundleVersion": "77"]
+        try PropertyListSerialization.data(fromPropertyList: info, format: .xml, options: 0)
+            .write(to: directory.appendingPathComponent("Contents/Info.plist"))
+        let bundle = try #require(Bundle(url: directory))
+        #expect(AppDelegate.installedVersionDescription(bundle: bundle) == "3.4")
+
+        func labels(_ view: NSView) -> [String] {
+            ((view as? NSTextField).map { [$0.stringValue] } ?? []) + view.subviews.flatMap(labels)
+        }
+        NSApp.orderFrontStandardAboutPanel(options: AppDelegate.aboutPanelOptions(bundle: bundle))
+        let about = try #require(NSApp.windows.first { $0.contentView.map(labels)?.contains("Tim’s Markdown Reader") == true })
+        defer { about.close() }
+        let shown = about.contentView.map(labels) ?? []
+        #expect(shown.contains("Version 3.4"))
+        #expect(!shown.contains { $0.contains("77") })
     }
 }
